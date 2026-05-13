@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr$SPONZIFY | Admin Core</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root { --gold: #C5A059; --bg: #050505; --card: #111; --border: rgba(197, 160, 89, 0.2); }
+        body { background: var(--bg); color: #FFF; font-family: 'Inter', sans-serif; display: flex; height: 100vh; overflow: hidden; margin: 0; }
+        .sidebar { width: 280px; background: var(--card); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        .nav-item { padding: 18px 30px; color: #888; font-weight: 600; cursor: pointer; display: flex; gap: 15px; border-left: 4px solid transparent; transition: 0.3s; }
+        .nav-item:hover, .nav-item.active { background: rgba(197,160,89,0.05); color: var(--gold); border-color: var(--gold); }
+        .main { flex: 1; overflow-y: auto; padding: 40px; position: relative; }
+        .view { display: none; animation: fadeIn 0.4s; } .view.active { display: block; }
+        @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .table { width: 100%; border-collapse: collapse; } .table th, .table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left; } .table th { color: var(--gold); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        .form-label { display: block; color: #666; font-size: 0.75rem; text-transform: uppercase; font-weight: 800; margin-bottom: 8px; letter-spacing: 1px; }
+        .form-input { width: 100%; background: #000; border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 4px; color: #FFF; margin-bottom: 25px; transition: 0.3s; }
+        .form-input:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 10px rgba(197, 160, 89, 0.1); }
+        .btn-gold { background: var(--gold); color: #000; padding: 12px 25px; border-radius: 4px; font-weight: 900; font-family: 'Cinzel'; cursor: pointer; transition: 0.3s; border: none; }
+        .btn-gold:hover { transform: scale(1.02); opacity: 0.9; }
+        .btn-icon { background: rgba(255,255,255,0.05); color: #FFF; width: 35px; height: 35px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-icon:hover { background: var(--gold); color: #000; }
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
+        .stat-box { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 8px; text-align: center; }
+        .stat-val { font-size: 2rem; font-family: 'Cinzel'; color: var(--gold); font-weight: 900; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="p-10 text-center border-b border-white/5">
+            <h2 class="text-xl text-gold font-black" style="font-family:'Cinzel'">Mr$SPONZIFY</h2>
+            <p class="text-[9px] text-gray-500 tracking-[3px] mt-1">MASTER CONTROLLER</p>
+        </div>
+        <nav class="flex-1 mt-6">
+            <div class="nav-item active" onclick="switchTab('view-dash', this)"><i class="fa-solid fa-gauge-high w-5"></i> Overview</div>
+            <div class="nav-item" onclick="switchTab('view-branding', this)"><i class="fa-solid fa-paint-roller w-5"></i> Website Branding</div>
+            <div class="nav-item" onclick="switchTab('view-rates', this)"><i class="fa-solid fa-money-bill-trend-up w-5"></i> Market Rates</div>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <div id="view-dash" class="view active">
+            <h2 class="text-2xl font-bold mb-8 royal-text" style="font-family:'Cinzel'">Administrative Overview</h2>
+            <div class="stat-grid">
+                <div class="stat-box"><p class="form-label">Total Categories</p><div id="stat-cats" class="stat-val">0</div></div>
+                <div class="stat-box"><p class="form-label">Active Market Plans</p><div id="stat-plans" class="stat-val">0</div></div>
+                <div class="stat-box"><p class="form-label">System License</p><div class="stat-val text-green-500 text-lg mt-2">ACTIVE</div></div>
+            </div>
+            <div class="card"><h3 class="text-gold royal-text mb-4">Quick Actions</h3><div class="flex gap-4"><button class="btn-gold text-xs" onclick="switchTab('view-rates', document.querySelectorAll('.nav-item')[2])">Add New Rate Plan</button><button class="btn-gold text-xs bg-white text-black" onclick="switchTab('view-branding', document.querySelectorAll('.nav-item')[1])">Edit Site Text</button></div></div>
+        </div>
+
+        <div id="view-branding" class="view">
+            <div class="flex justify-between items-center mb-8"><h2 class="text-2xl font-bold royal-text" style="font-family:'Cinzel'">Website Branding & Content</h2><button class="btn-gold px-8" onclick="saveGlobal()"><i class="fa-solid fa-cloud-arrow-up mr-2"></i> PUBLISH LIVE</button></div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card"><h3 class="text-white royal-text mb-6 border-b border-white/5 pb-2">Identity Settings</h3><label class="form-label">Main Logo Name</label><input type="text" id="g-logoName" class="form-input" placeholder="e.g. Mr$SPONZIFY"><label class="form-label">Sub-Logo Motto</label><input type="text" id="g-logoSub" class="form-input" placeholder="— NETWORK —"><label class="form-label">WhatsApp Contact Number</label><input type="text" id="g-waNumber" class="form-input" placeholder="923000000000"><label class="form-label">Global News Ticker Text</label><input type="text" id="g-tickerText" class="form-input"></div>
+                <div class="card"><h3 class="text-white royal-text mb-6 border-b border-white/5 pb-2">Hero Page Content</h3><label class="form-label">Hero Main Title</label><input type="text" id="g-heroHeading" class="form-input"><label class="form-label">Hero Description</label><textarea id="g-heroSub" class="form-input" rows="3"></textarea><label class="form-label">Legacy / About Us Paragraph</label><textarea id="g-aboutText" class="form-input" rows="5"></textarea></div>
+            </div>
+        </div>
+
+        <div id="view-rates" class="view">
+            <div class="flex justify-between items-center mb-8"><h2 class="text-2xl font-bold royal-text" style="font-family:'Cinzel'">Market Rates Engine</h2><button class="btn-gold" onclick="addCat()"><i class="fa-solid fa-plus mr-2"></i> NEW CATEGORY</button></div>
+            <div id="cms-cats"><div class="text-center text-gray-600 py-20"><i class="fa-solid fa-circle-notch fa-spin fa-2x"></i></div></div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+        import { getDatabase, ref, onValue, update, set, get } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyD1VVoH04Fv_reDEJbOiyQKOqgwOMKU0Lc", authDomain: "llrental.firebaseapp.com", databaseURL: "https://llrental-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "llrental", storageBucket: "llrental.firebasestorage.app", messagingSenderId: "1089848095257", appId: "1:1089848095257:web:97423bcf81b8c12488f088" };
+        const app = initializeApp(firebaseConfig); const db = getDatabase(app);
+
+
+        onValue(ref(db, 'cms/license'), (snapshot) => {
+            const license = snapshot.val();
+            if (license && license.status === 'suspended') {
+                document.body.innerHTML = `
+                    <div style="height: 100vh; width: 100vw; background-color: #050505; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; text-align: center; padding: 20px;">
+                        <i class="fa-solid fa-ban" style="font-size: 5rem; margin-bottom: 25px; color: #E63946;"></i>
+                        <h1 style="font-size: 2.5rem; font-weight: 900; color: #FFF; letter-spacing: 2px; margin-bottom: 10px;">ADMINISTRATIVE ACCESS DENIED</h1>
+                        <p style="color: #888; font-size: 1rem; max-width: 500px; margin-bottom: 30px;">The operational license for this software has been revoked by the Master Developer. Please complete pending obligations to restore access.</p>
+                        <div style="padding: 15px 30px; border: 1px solid #E63946; color: #E63946; font-size: 0.8rem; letter-spacing: 2px; background: rgba(230, 57, 70, 0.05); font-weight: bold;">ERROR CODE: 403-SaaS-SUSPENDED</div>
+                    </div>`;
+            }
+        });
+
+        window.onload = () => { start(); };
+        window.switchTab = (id, el) => { document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(v=>v.classList.remove('active')); document.getElementById(id).classList.add('active'); el.classList.add('active'); };
+        function notify(msg) { Swal.fire({text:msg, icon:'success', background:'#111', color:'#FFF', timer:1500, showConfirmButton:false}); }
+
+        function start() {
+            get(ref(db, 'cms/global')).then(s => { if(!s.exists()) seed(); });
+            onValue(ref(db, 'cms/global'), s => { const d = s.val(); if(!d) return; const fields = ['logoName','logoSub','tickerText','waNumber','heroHeading','heroSub','aboutText']; fields.forEach(f => document.getElementById('g-'+f).value = d[f] || ''); });
+            onValue(ref(db, 'cms/categories'), s => {
+                const box = document.getElementById('cms-cats'); box.innerHTML = ''; const data = s.val() || {}; let catCount = 0; let planCount = 0;
+                Object.entries(data).forEach(([cName, c]) => {
+                    catCount++;
+                    let h = `<div class="card relative"><div class="flex justify-between items-center mb-6 border-b border-white/5 pb-4"><h3 class="text-gold royal-text font-bold text-xl" style="font-family:'Cinzel'">${cName}</h3><div class="flex gap-2"><button class="btn-gold text-[10px] py-2" style="background:${c.active ? '#10B981':'#E63946'}; color:#FFF" onclick="toggleCat('${cName}', ${!c.active})">${c.active ? 'LIVE':'HIDDEN'}</button><button class="btn-gold text-[10px] py-2 bg-blue-600 text-white" onclick="addPlan('${cName}')">+ ADD PLAN</button><button class="btn-icon text-red-500" onclick="delCat('${cName}')"><i class="fa-solid fa-trash"></i></button></div></div>`;
+                    if(c.plans) { h += `<table class="table"><tr><th>Limit/Metric</th><th>Yield ($)</th><th>Action</th></tr>`; Object.entries(c.plans).forEach(([pId, p]) => { planCount++; h += `<tr><td><input type="text" id="l_${cName}_${pId}" value="${p.limit}" class="form-input mb-0 py-2 text-xs"></td><td style="width:120px"><input type="number" step="0.1" id="r_${cName}_${pId}" value="${p.rate}" class="form-input mb-0 py-2 text-xs"></td><td style="width:100px"><div class="flex gap-2"><button class="btn-icon" onclick="savePlan('${cName}','${pId}')"><i class="fa-solid fa-save text-green-500"></i></button><button class="btn-icon" onclick="delPlan('${cName}','${pId}')"><i class="fa-solid fa-xmark text-red-500"></i></button></div></td></tr>`; }); h += `</table>`; } else { h += `<p class="text-gray-600 text-xs italic">No rate plans added to this category node.</p>`; }
+                    box.innerHTML += h + `</div>`;
+                });
+                document.getElementById('stat-cats').innerText = catCount; document.getElementById('stat-plans').innerText = planCount;
+            });
+        }
+
+        window.saveGlobal = () => { update(ref(db, 'cms/global'), { logoName: document.getElementById('g-logoName').value, logoSub: document.getElementById('g-logoSub').value, tickerText: document.getElementById('g-tickerText').value, waNumber: document.getElementById('g-waNumber').value, heroHeading: document.getElementById('g-heroHeading').value, heroSub: document.getElementById('g-heroSub').value, aboutText: document.getElementById('g-aboutText').value }).then(()=> notify("Website Published Successfully!")); };
+        window.addCat = () => { const n = prompt("Category Name:"); if(n) update(ref(db, `cms/categories/${n}`), {active: true, plans: {}}); };
+        window.delCat = (c) => { if(confirm("Erase entire category?")) set(ref(db, `cms/categories/${c}`), null); };
+        window.toggleCat = (c, s) => { set(ref(db, `cms/categories/${c}/active`), s).then(() => notify(s ? "Category is now LIVE" : "Category is HIDDEN")); };
+        window.addPlan = (c) => { const id = 'p'+Date.now(); set(ref(db, `cms/categories/${c}/plans/${id}`), {limit: "New Limit", rate: 0}); };
+        window.savePlan = (c, id) => { const l = document.getElementById(`l_${c}_${id}`).value; const r = document.getElementById(`r_${c}_${id}`).value; update(ref(db, `cms/categories/${c}/plans/${id}`), {limit: l, rate: parseFloat(r)}).then(()=>notify("Plan Updated")); };
+        window.delPlan = (c, id) => { if(confirm("Delete plan?")) set(ref(db, `cms/categories/${c}/plans/${id}`), null); };
+
+        function seed() { set(ref(db, 'cms'), { license: { status: 'active' }, global: { logoName: "Mr$SPONZIFY", logoSub: "— NETWORK —", tickerText: "CONNECTING TO THE ELITE ASSET SYNDICATE...", waNumber: "923021492846", heroHeading: "<span class='text-gradient'>Premium Assets</span><br>Brokerage Core", heroSub: "The premier destination for professional asset management.", aboutText: "Operating globally, we bridge the gap between premium suppliers and corporate demand." }, categories: { "Fresh Assets": { active: true, plans: { p1: {limit:"100+", rate:2.5} } } } }); }
+    </script>
+</body>
+</html>

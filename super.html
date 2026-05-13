@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE RR GROUP | God Mode</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { background: #000; color: #FFF; font-family: monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .terminal-box { background: #0a0a0a; border: 1px solid #333; padding: 40px; border-radius: 8px; width: 100%; max-width: 500px; box-shadow: 0 0 50px rgba(255,0,0,0.1); }
+        .btn { display: block; width: 100%; padding: 15px; margin-top: 20px; font-weight: bold; font-family: monospace; font-size: 1.1rem; border: none; border-radius: 4px; cursor: pointer; transition: 0.3s; }
+        .btn-red { background: #E63946; color: #FFF; } .btn-red:hover { background: #c1121f; box-shadow: 0 0 20px rgba(230,57,70,0.5); }
+        .btn-green { background: #10B981; color: #FFF; } .btn-green:hover { background: #059669; box-shadow: 0 0 20px rgba(16,185,129,0.5); }
+        .status-badge { display: inline-block; padding: 5px 15px; border-radius: 50px; font-weight: bold; font-size: 0.8rem; letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+
+    <div class="terminal-box" id="main-ui" style="display: none;">
+        <div class="text-center mb-8 border-b border-gray-800 pb-6">
+            <h1 class="text-3xl font-black text-gray-300 tracking-widest mb-2"><i class="fa-solid fa-skull text-red-500"></i> GOD MODE</h1>
+            <p class="text-gray-600 text-xs tracking-widest">THE RR GROUP - MASTER OVERRIDE</p>
+        </div>
+
+        <div class="mb-8 p-4 bg-black border border-gray-800 rounded">
+            <p class="text-gray-500 text-sm mb-2">TARGET DATABASE:</p>
+            <p class="text-blue-400 font-bold mb-4">Mr$SPONZIFY NETWORK</p>
+            
+            <p class="text-gray-500 text-sm mb-2">CURRENT LICENSE STATUS:</p>
+            <div id="status-display" class="status-badge bg-gray-800 text-gray-400">CHECKING...</div>
+        </div>
+
+        <button id="btn-suspend" class="btn btn-red" onclick="triggerKillSwitch('suspended')">
+            <i class="fa-solid fa-power-off mr-2"></i> REVOKE LICENSE (LOCK SYSTEM)
+        </button>
+
+        <button id="btn-activate" class="btn btn-green" onclick="triggerKillSwitch('active')" style="display: none;">
+            <i class="fa-solid fa-check mr-2"></i> RESTORE LICENSE (UNLOCK SYSTEM)
+        </button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+
+        // Secret Password Check (Basic Front-end security)
+        const pass = prompt("ENTER MASTER PASSCODE:");
+        if(pass !== "RR-GOD") {
+            document.body.innerHTML = "<h1 style='color:red;'>SECURITY BREACH DETECTED. IP LOGGED.</h1>";
+        } else {
+            document.getElementById('main-ui').style.display = 'block';
+        }
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD1VVoH04Fv_reDEJbOiyQKOqgwOMKU0Lc",
+            authDomain: "llrental.firebaseapp.com",
+            databaseURL: "https://llrental-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "llrental",
+            storageBucket: "llrental.firebasestorage.app",
+            messagingSenderId: "1089848095257",
+            appId: "1:1089848095257:web:97423bcf81b8c12488f088"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Listen to Current Status
+        onValue(ref(db, 'cms/license/status'), (snapshot) => {
+            const status = snapshot.val() || 'active'; // Default active
+            const display = document.getElementById('status-display');
+            const btnSuspend = document.getElementById('btn-suspend');
+            const btnActivate = document.getElementById('btn-activate');
+
+            if(status === 'suspended') {
+                display.className = "status-badge bg-red-900 text-red-400";
+                display.innerText = "SYSTEM SUSPENDED (LOCKED)";
+                btnSuspend.style.display = 'none';
+                btnActivate.style.display = 'block';
+            } else {
+                display.className = "status-badge bg-green-900 text-green-400";
+                display.innerText = "SYSTEM ACTIVE (RUNNING)";
+                btnSuspend.style.display = 'block';
+                btnActivate.style.display = 'none';
+            }
+        });
+
+        // Trigger the Kill Switch
+        window.triggerKillSwitch = (action) => {
+            const actionText = action === 'suspended' ? 'LOCK' : 'UNLOCK';
+            Swal.fire({
+                title: `Are you sure you want to ${actionText} the system?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: action === 'suspended' ? '#E63946' : '#10B981',
+                background: '#111', color: '#FFF'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    set(ref(db, 'cms/license/status'), action).then(() => {
+                        Swal.fire({
+                            title: 'COMMAND EXECUTED',
+                            text: `System has been ${action === 'suspended' ? 'Locked' : 'Unlocked'}.`,
+                            icon: 'success',
+                            background: '#111', color: '#FFF'
+                        });
+                    });
+                }
+            });
+        };
+    </script>
+</body>
+</html>
